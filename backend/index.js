@@ -1,24 +1,24 @@
 const express=require('express')
-const notes = require('./data/notes')
+const config =require('./config/connection')
 const dotenv=require('dotenv')
+const UserRoutes=require('./Routes/UserRout')
+const { errorHandler, notFound } = require('./middleware/errorHandler')
 
 const app=express()
 dotenv.config()
+
+app.use(express.json())
+// app.use('/', UserRoutes)
 
 app.get('/',(req,res)=>{
     res.send('api is running')
 })
 
-app.get('/api/notes',(req,res)=>{
-    res.json(notes)
-})
+app.use('/api/users',UserRoutes)
+app.use(errorHandler)
+app.use(notFound)
 
-app.get('/api/notes/:id',(req,res)=>{
-    const note=notes.find((n)=>n._id===req.params.id)
-    console.log(note);
-    res.send(note)
-})
 
-const PORT=process.env.PORT||3000
+const PORT=process.env.PORT||5000
 
 app.listen(PORT,console.log(`server started at port ${PORT}`)) //template literal
